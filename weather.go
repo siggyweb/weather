@@ -3,24 +3,24 @@ package main
 // TODO json encoding tags.
 type Weather struct {
 	Location struct {
-		Name           string
-		Region         string
-		Country        string
-		Lat            float64
-		Long           float64
-		Tz_id          string
-		LocaltimeEpock int
-		Localtime      string
+		Name           string  `json:"name"`
+		Region         string  `json:"region"`
+		Country        string  `json:"country"`
+		Latitude            float64 `json:"lat"`
+		Longitude           float64 `json:"lon"`
+		Timezone          string  `json:"tz_id"`
+		LocaltimeEpock int     `json:"localtime_epoch"`
+		LocalTime      string  `json:"localtime"`
 	}
 	Current struct {
-		LastUpdated string
-		TempC       int
-		Tempf       int
-		IsDay       int
+		LastUpdated string `json:"last_updated"`
+		TempC       int    `json:"temp_c"`
+		Tempf       int    `json:"temp_f"`
+		IsDay       int    `json:"is_day"`
 		Condition   struct {
-			Desc string
-			Icon string
-			Code int
+			Description string `json:"text"`
+			Icon string `json:"icon"`
+			Code int    `json:"code"`
 		}
 	}
 }
