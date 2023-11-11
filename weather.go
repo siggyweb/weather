@@ -34,9 +34,8 @@ type Weather struct {
 	}
 }
 
-// Should the weather struct be broken out??
+// TODO create a weather receiver to display the info to the console
 
-// TODO populate weather call stub.
 func CallWeather(l string, w *Weather) error {
 	// TODO retrieving secret could be modularised
 	secret, err := os.ReadFile(".env")
@@ -44,26 +43,48 @@ func CallWeather(l string, w *Weather) error {
 		return fmt.Errorf("could not open secret file, %v", err)
 	}
 
-	// create url
-	baseUrl := "https://api.weatherapi.com/v1/current"
-	params := url.Values{}
-	params.Add("key", string(secret))
-	params.Add("location", l)
-	url := baseUrl + params.Encode()
+	//TODO refactor based on optimal request.
 
-	// make the call to weather api and retrieve response
+	// way 1 - everything
+	baseUrl := "https://api.weatherapi.com/v1/current.json?"
+	params := url.Values{}
+	params.Add("q", l)
+	params.Add("key", string(secret))
+	url := baseUrl + params.Encode()
+	fmt.Println(url)
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("get call failed, %v", err)
 	}
-	rawJSON, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("could not read resonse body, %v", err)
-	}
 
-	// parse into a struct
-	//weatherData := []byte{}
-	json.Unmarshal(rawJSON, w)
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("get call failed, %v", err)
+	}
+	fmt.Println(string(body))
+
+	// way 2 - my struct
+	baseUrl2 := "https://api.weatherapi.com/v1/current.json"
+	req, err := http.NewRequest(http.MethodGet, baseUrl2, nil)
+	if err != nil {
+		return fmt.Errorf("request creation failed, %v", err)
+	}
+	req.Header.Set("accept", "application/json")
+	q := req.URL.Query()
+	q.Add("q", l)
+	q.Add("key", string(secret))
+	req.URL.RawQuery = q.Encode()
+	fmt.Println(req.URL)
+
+	client := http.Client{}
+	response, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed, %v", err)
+	}
+	defer response.Body.Close()
+	json.NewDecoder(response.Body).Decode(w)
 
 	return nil
 }
