@@ -2,10 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
 	"net/http"
-	"net/url"
 	"os"
 )
 
@@ -28,43 +27,27 @@ type Weather struct {
 		IsDay       int    `json:"is_day"`
 		Condition   struct {
 			Description string `json:"text"`
-			Icon        string `json:"icon"`
-			Code        int    `json:"code"`
+			// Icon        string `json:"icon"`
+			// Code        int    `json:"code"`
 		}
 	}
 }
 
-// TODO create a weather receiver to display the info to the console
+func (w Weather) display() ([]byte, error) {
+	bytes, err := json.MarshalIndent(w, "", "\t")
+	if err != nil {
+		return nil, errors.New("could not marshall weather JSON")
+	}
+	return bytes, nil
+}
 
-func CallWeather(l string, w *Weather) error {
+func GetWeather(l string, w *Weather) error {
 	// TODO retrieving secret could be modularised
 	secret, err := os.ReadFile(".env")
 	if err != nil {
 		return fmt.Errorf("could not open secret file, %v", err)
 	}
 
-	//TODO refactor verbose call
-
-	// way 1 - verbose
-	baseUrl := "https://api.weatherapi.com/v1/current.json?"
-	params := url.Values{}
-	params.Add("q", l)
-	params.Add("key", string(secret))
-	url := baseUrl + params.Encode()
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return fmt.Errorf("get call failed, %v", err)
-	}
-
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("get call failed, %v", err)
-	}
-	fmt.Println(string(body))
-
-	// way 2 - brief
 	baseUrl2 := "https://api.weatherapi.com/v1/current.json"
 	req, err := http.NewRequest(http.MethodGet, baseUrl2, nil)
 	if err != nil {
