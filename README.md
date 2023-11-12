@@ -12,4 +12,4 @@ call `weather <location> -flag` from command line to see instant weather data fo
 
 ## Options
 
--v standard call is brief and can be extended with the verbose flag to view extra weather data.
+-v extended call with the verbose flag to view extra weather data.
