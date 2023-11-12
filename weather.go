@@ -43,15 +43,14 @@ func CallWeather(l string, w *Weather) error {
 		return fmt.Errorf("could not open secret file, %v", err)
 	}
 
-	//TODO refactor based on optimal request.
+	//TODO refactor verbose call
 
-	// way 1 - everything
+	// way 1 - verbose
 	baseUrl := "https://api.weatherapi.com/v1/current.json?"
 	params := url.Values{}
 	params.Add("q", l)
 	params.Add("key", string(secret))
 	url := baseUrl + params.Encode()
-	fmt.Println(url)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -65,7 +64,7 @@ func CallWeather(l string, w *Weather) error {
 	}
 	fmt.Println(string(body))
 
-	// way 2 - my struct
+	// way 2 - brief
 	baseUrl2 := "https://api.weatherapi.com/v1/current.json"
 	req, err := http.NewRequest(http.MethodGet, baseUrl2, nil)
 	if err != nil {
@@ -76,7 +75,6 @@ func CallWeather(l string, w *Weather) error {
 	q.Add("q", l)
 	q.Add("key", string(secret))
 	req.URL.RawQuery = q.Encode()
-	fmt.Println(req.URL)
 
 	client := http.Client{}
 	response, err := client.Do(req)

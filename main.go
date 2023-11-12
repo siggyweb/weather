@@ -6,16 +6,16 @@ import (
 )
 
 func main() {
-	fmt.Println("The weather is sunny.")
-
-	// TODO take command line arg for weather and collect data.
-	// change this back to 1 for released version
+	// TODO input guarding for multiple inputs
 	input := os.Args
-	if len(input) <= 0 {
+	if len(input) <= 1 {
 		fmt.Println("please enter a location string")
 		os.Exit(0)
 	}
+
+	// TODO check for verbose flag
+
 	w := Weather{}
-	CallWeather("London", &w)
+	CallWeather(input[1], &w)
 	fmt.Println(w)
 }
