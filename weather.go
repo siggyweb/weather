@@ -22,8 +22,8 @@ type Weather struct {
 	}
 	Current struct {
 		LastUpdated string `json:"last_updated"`
-		TempC       int    `json:"temp_c"`
-		Tempf       int    `json:"temp_f"`
+		TempC       float32    `json:"temp_c"`
+		Tempf       float32    `json:"temp_f"`
 		IsDay       int    `json:"is_day"`
 		Condition   struct {
 			Description string `json:"text"`
