@@ -9,6 +9,7 @@ store raw api key in a local file called .env
 ## USE
 
 call `weather <location> -flag` from command line to see instant weather data for the given location.
+As per API spec can pass US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude (decimal degree) or city name.
 
 ## Options
 

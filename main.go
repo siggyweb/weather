@@ -8,9 +8,9 @@ import (
 func main() {
 	// TODO input guarding for multiple inputs
 	input := os.Args
-	if len(input) <= 0 {
-		fmt.Println("please enter a location string")
-		os.Exit(0)
+	if len(input) <= 1 {
+		fmt.Println("please enter a location string in the form \"weather <location>\". See README for more info. ")
+		os.Exit(1)
 	}
 
 	// TODO check for verbose flag
