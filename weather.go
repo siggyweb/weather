@@ -21,10 +21,10 @@ type Weather struct {
 		LocalTime      string  `json:"localtime"`
 	}
 	Current struct {
-		LastUpdated string `json:"last_updated"`
-		TempC       float32    `json:"temp_c"`
-		Tempf       float32    `json:"temp_f"`
-		IsDay       int    `json:"is_day"`
+		LastUpdated string  `json:"last_updated"`
+		TempC       float32 `json:"temp_c"`
+		Tempf       float32 `json:"temp_f"`
+		IsDay       int     `json:"is_day"`
 		Condition   struct {
 			Description string `json:"text"`
 			// Icon        string `json:"icon"`
@@ -33,12 +33,18 @@ type Weather struct {
 	}
 }
 
-func (w Weather) display() ([]byte, error) {
-	bytes, err := json.MarshalIndent(w, "", "\t")
-	if err != nil {
-		return nil, errors.New("could not marshall weather JSON")
+// REfactor to recursively print struct.
+func (w Weather) display(flag bool) ([]byte, error) {
+	if flag {
+		bytes, err := json.MarshalIndent(w, "", "\t")
+		if err != nil {
+			return nil, errors.New("could not marshall weather JSON")
+		}
+		return bytes, nil
+	} else {
+		str := fmt.Sprintf("The weather in %s is %s, with a temperature of %.01fC.\n", w.Location.Name, w.Current.Condition.Description, w.Current.TempC)
+		return []byte(str), nil
 	}
-	return bytes, nil
 }
 
 func GetWeather(l string, w *Weather) error {
@@ -48,11 +54,13 @@ func GetWeather(l string, w *Weather) error {
 		return fmt.Errorf("could not open secret file, %v", err)
 	}
 
-	baseUrl2 := "https://api.weatherapi.com/v1/current.json"
-	req, err := http.NewRequest(http.MethodGet, baseUrl2, nil)
+	// TODO could modularise the request creation
+	baseUrl := "https://api.weatherapi.com/v1/current.json"
+	req, err := http.NewRequest(http.MethodGet, baseUrl, nil)
 	if err != nil {
 		return fmt.Errorf("request creation failed, %v", err)
 	}
+
 	req.Header.Set("accept", "application/json")
 	q := req.URL.Query()
 	q.Add("q", l)
